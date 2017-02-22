@@ -17,9 +17,9 @@ def call(String owningProject = 'Jenkins', boolean sendToNhsd = true) {
             colour = 'danger'
     }
 
-    def utils = new Utils(steps)
+    def utils = new Utils(steps, currentBuild)
     def statusString = buildStatus.toLowerCase().capitalize()
-    def timeString = utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
+    def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
 
     // Default values
     def message = "${owningProject} [${baseName}] - #${env.BUILD_NUMBER} ${statusString} (<${env.BUILD_URL}|Open>)\n" +

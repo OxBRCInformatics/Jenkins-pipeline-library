@@ -8,9 +8,11 @@ import hudson.tasks.test.AbstractTestResultAction
 class Utils implements Serializable {
 
     def steps
+    def currentBuild
 
-    Utils(steps){
+    Utils(steps, currentBuild){
         this.steps = steps
+        this.currentBuild = currentBuild
     }
 
     String getTestResults() {
@@ -32,7 +34,7 @@ class Utils implements Serializable {
     }
 
 
-    String getTime(long start, long end) {
+    static String getTime(long start, long end) {
 
         long duration = end - start
 
