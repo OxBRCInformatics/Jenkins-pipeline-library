@@ -5,7 +5,7 @@ import hudson.tasks.test.AbstractTestResultAction
 /**
  * @since 22/02/2017
  */
-class Utils {
+class Utils implements Serializable {
 
     def steps
 
