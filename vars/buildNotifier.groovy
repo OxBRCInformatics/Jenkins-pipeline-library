@@ -17,7 +17,7 @@ def call(String owningProject = 'Jenkins', boolean sendToNhsd = true) {
             colour = 'danger'
     }
 
-    def utils = new Utils()
+    def utils = new Utils(steps)
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
 
