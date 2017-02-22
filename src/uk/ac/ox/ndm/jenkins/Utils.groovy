@@ -7,6 +7,12 @@ import hudson.tasks.test.AbstractTestResultAction
  */
 class Utils {
 
+    def steps
+
+    Utils(steps){
+        this.steps = steps
+    }
+
     String getTestResults() {
         String results = "Test Status: Unknown"
         try {
@@ -20,7 +26,7 @@ class Utils {
             }
         } catch (Exception ignored) {}
 
-        echo "${results}"
+        steps.echo "${results}"
 
         results
     }
