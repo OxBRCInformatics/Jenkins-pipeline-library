@@ -7,7 +7,7 @@ import hudson.tasks.test.AbstractTestResultAction
  */
 class Utils {
 
-    static String getTestResults() {
+    String getTestResults() {
         String results = "Test Status: Unknown"
         try {
             AbstractTestResultAction testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
@@ -26,7 +26,7 @@ class Utils {
     }
 
 
-    static String getTime(long start, long end) {
+    String getTime(long start, long end) {
 
         long duration = end - start
 
