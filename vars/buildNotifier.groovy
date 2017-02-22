@@ -17,14 +17,14 @@ def call(String owningProject = 'Jenkins', boolean sendToNhsd = true) {
             colour = 'danger'
     }
 
-    def utils = new Utils(steps, currentBuild)
+    def utils = new Utils()
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
 
     // Default values
     def message = "${owningProject} [${baseName}] - #${env.BUILD_NUMBER} ${statusString} (<${env.BUILD_URL}|Open>)\n" +
                   "Time: ${timeString}\n" +
-                  "${utils.getTestResults()}"
+                  "${utils.getTestResults(currentBuild)}"
 
     // Send notifications
     slackSend(color: colour, message: message)

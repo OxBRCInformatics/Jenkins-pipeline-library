@@ -7,15 +7,7 @@ import hudson.tasks.test.AbstractTestResultAction
  */
 class Utils implements Serializable {
 
-    def steps
-    def currentBuild
-
-    Utils(steps, currentBuild){
-        this.steps = steps
-        this.currentBuild = currentBuild
-    }
-
-    String getTestResults() {
+    String getTestResults(currentBuild) {
         String results = "Test Status: Unknown"
         try {
             AbstractTestResultAction testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
@@ -27,12 +19,8 @@ class Utils implements Serializable {
                           "Skipped: ${testResultAction.skipCount}"
             }
         } catch (Exception ignored) {}
-
-        steps.echo "${results}"
-
         results
     }
-
 
     static String getTime(long start, long end) {
 
