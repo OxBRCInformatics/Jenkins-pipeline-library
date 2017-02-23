@@ -2,6 +2,10 @@ package uk.ac.ox.ndm.jenkins
 
 import hudson.tasks.test.AbstractTestResultAction
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 /**
  * @since 22/02/2017
  */
@@ -52,5 +56,12 @@ class Utils implements Serializable {
             port = it.getLocalPort()
         }
         port
+    }
+
+    static String generateRandomTestFolder(){
+        String folder = "/tmp/${UUID.randomUUID().toString()}"
+        Path path = Paths.get(folder)
+        Files.createDirectories(path)
+        folder
     }
 }
