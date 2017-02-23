@@ -45,4 +45,12 @@ class Utils implements Serializable {
 
         sb.toString().trim()
     }
+
+    int findFreeTcpPort(){
+        int port
+        new ServerSocket(0).withCloseable {
+            port = it.getLocalPort()
+        }
+        port
+    }
 }
