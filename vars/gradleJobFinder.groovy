@@ -13,15 +13,9 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
     echo "Workspace: ${workspace}"
 
-    def itPaths = Files.walk(workspace).filter({path ->
-        Files.isDirectory(path)
-    }).collect(Collectors.toList())
-/*
-.filter({path ->
-        echo "Path: ${path}"
+    def itPaths = Files.walk(workspace).collect(Collectors.toList()).findAll {path ->
         Files.exists(path.resolve('src/integration-test'))
-    })
- */
+    }
     echo "itPaths: ${itPaths}"
 /*
     itPaths.each {project ->
