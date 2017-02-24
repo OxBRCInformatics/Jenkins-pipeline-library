@@ -13,11 +13,14 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
     echo "Workspace: ${workspace}"
 
-    List<Path> itPaths = Files.walk(workspace)
-            .filter({path -> Files.exists(path.resolve('src/integration-test'))}).collect(Collectors.toList())
+    def itPaths = Files.walk(workspace)
+            .filter({path ->
+        echo "Path: ${path}"
+        Files.exists(path.resolve('src/integration-test'))
+    }).collect(Collectors.toList())
 
     echo "itPaths: ${itPaths}"
-
+/*
     itPaths.each {project ->
         String dirName = project.fileName.toString()
         jobs[dirName] = {
@@ -55,6 +58,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
         }
     }
+    */
     jobs.failFast = true
     jobs
 }
