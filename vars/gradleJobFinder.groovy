@@ -4,17 +4,23 @@ import uk.ac.ox.ndm.jenkins.Utils
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 
 // ws = pwd() as String
 Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
-    Map jobs = [failFast: true]
+    Map jobs = [:]
     Path workspace = Paths.get(ws)
 
-    Files.walk(workspace)
-            .filter({path -> Files.exists(path.resolve('src/integration-test'))})
-            .each {project ->
+    echo "Workspace: ${workspace}"
+
+    List<Path> itPaths = Files.walk(workspace)
+            .filter({path -> Files.exists(path.resolve('src/integration-test'))}).collect(Collectors.toList())
+
+    echo "itPaths: ${itPaths}"
+
+    itPaths.each {project ->
         String dirName = project.fileName.toString()
-        jobs["${dirName}"] = {
+        jobs[dirName] = {
 
             node {
                 stage('IT Checkout') {
@@ -49,5 +55,6 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
         }
     }
+    jobs.failFast = true
     jobs
 }
