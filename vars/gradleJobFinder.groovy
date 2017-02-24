@@ -13,8 +13,9 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
     echo "Workspace: ${workspace}"
 
-    def itPaths = Files.walk(workspace)
-            .collect(Collectors.toList())
+    def itPaths = Files.walk(workspace).filter({path ->
+        Files.isDirectory(path)
+    }).collect(Collectors.toList())
 /*
 .filter({path ->
         echo "Path: ${path}"
