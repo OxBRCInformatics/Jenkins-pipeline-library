@@ -13,49 +13,48 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
     echo "Workspace: ${workspace}"
 
-    def itPaths = Files.walk(workspace).collect(Collectors.toList()).findAll {path ->
-        Files.exists(path.resolve('src/integration-test'))
-    }
-    echo "itPaths: ${itPaths}"
-/*
-    itPaths.each {project ->
-        String dirName = project.fileName.toString()
-        jobs[dirName] = {
+    workspace.eachDir {path ->
 
-            node {
-                stage('IT Checkout') {
-                    checkout scm
-                }
+        if (Files.exists(path.resolve('src/integration-test'))) {
 
-                stage('Integration Test') {
+            String dirName = path.fileName.toString()
+            jobs[dirName] = {
 
-                    def pgPort = Utils.findFreeTcpPort()
-                    def rPort = Utils.findFreeTcpPort()
+                node {
+                    stage('IT Checkout') {
+                        checkout scm
+                    }
 
-                    echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
+                    stage('Integration Test') {
 
-                    def postgres = docker.build('m_postgres', 'test-utils/src/main/dockerfiles/postgres')
-                    def rabbit = docker.build('m_rabbit', 'test-utils/src/main/dockerfiles/rabbitmq')
+                        def pgPort = Utils.findFreeTcpPort()
+                        def rPort = Utils.findFreeTcpPort()
 
-                    rabbit.withRun("-p ${rPort}:5672") {
-                        postgres.withRun("-p ${pgPort}:5432") {
-                            dir("${dirName}") {
-                                sh "${gradle} dbmUpdate"
-                                sh "${grails} test-app --integration"
+                        echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
+
+                        def postgres = docker.build('m_postgres', 'test-utils/src/main/dockerfiles/postgres')
+                        def rabbit = docker.build('m_rabbit', 'test-utils/src/main/dockerfiles/rabbitmq')
+
+                        rabbit.withRun("-p ${rPort}:5672") {
+                            postgres.withRun("-p ${pgPort}:5432") {
+                                dir("${dirName}") {
+                                    sh "${gradle} dbmUpdate"
+                                    sh "${grails} test-app --integration"
+                                }
                             }
                         }
                     }
+
+                    stage('Integration Test Results') {
+                        junit allowEmptyResults: true, testResults: '**/build/test-results/*.xml'
+                    }
                 }
 
-                stage('Integration Test Results') {
-                    junit allowEmptyResults: true, testResults: '**/build/test-results/*.xml'
-                }
+
             }
-
-
         }
+
+        jobs.failFast = true
+        jobs
     }
-    */
-    jobs.failFast = true
-    jobs
 }
