@@ -12,6 +12,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     Path workspace = Paths.get(ws)
 
     echo "Workspace: ${workspace}"
+    echo "All Files: ${new File(ws).listFiles()}"
 
     workspace.eachDir {path ->
 
