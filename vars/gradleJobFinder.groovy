@@ -14,7 +14,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     echo "Workspace: ${workspace}"
 
     workspace.eachDir {path ->
-
+        echo "Testing: ${path}"
         if (Files.exists(path.resolve('src/integration-test'))) {
 
             String dirName = path.fileName.toString()
