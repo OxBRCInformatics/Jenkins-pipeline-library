@@ -65,9 +65,4 @@ class Utils implements Serializable {
         Files.createDirectories(path)
         folder
     }
-
-    static List<Path> getGrailsDirectoriesWithIntegrationTestFolders(String ws){
-        Path workspace = Paths.get(ws)
-        Files.walk(workspace).filter({path -> Files.exists(path.resolve('src/integration-test'))}).collect(Collectors.toList())
-    }
 }

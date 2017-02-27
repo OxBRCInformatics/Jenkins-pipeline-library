@@ -1,21 +1,20 @@
 #!/usr/bin/env groovy
 import uk.ac.ox.ndm.jenkins.Utils
 
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 // ws = pwd() as String
 Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     Map jobs = [:]
     File workspace = new File(ws)
 
-    echo "Workspace: ${workspace}"
+    List<File> files = workspace.listFiles()
 
-    List<Path> dirs = Utils.getGrailsDirectoriesWithIntegrationTestFolders(ws)
-
-    dirs.each {
-        echo "Testing ${it}"
-        /*
-        if (Files.exists(resolve('src/integration-test'))) {
+    for(File file : files){
+        Path path = Paths.get(file.path)
+        if (Files.exists(path.resolve('src/integration-test'))) {
 
             String dirName = path.fileName.toString()
             jobs[dirName] = {
@@ -46,14 +45,14 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
                     }
 
                     stage('Integration Test Results') {
-                        junit allowEmptyResults: true, testResults: '** /build/test-results/*.xml'
+                        junit allowEmptyResults: true, testResults: '**/build/test-results/*.xml'
                     }
                 }
 
 
             }
         }
-        */
+
     }
     jobs.failFast = true
     jobs
