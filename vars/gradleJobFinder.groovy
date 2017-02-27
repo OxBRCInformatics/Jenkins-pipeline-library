@@ -9,7 +9,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     echo "Workspace: ${workspace}"
 
 
-    def dirs = workspace.listFiles({File pathname -> pathname.isDirectory()})
+    def dirs = workspace.listFiles({File pathname -> pathname.isDirectory()} as FileFilter)
 
     echo "Dirs: ${dirs}"
 
