@@ -46,7 +46,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
                     }
 
                     stage('Integration Test Results') {
-                        junit allowEmptyResults: true, testResults: '**/build/test-results/*.xml'
+                        junit allowEmptyResults: true, testResults: '** /build/test-results/*.xml'
                     }
                 }
 
