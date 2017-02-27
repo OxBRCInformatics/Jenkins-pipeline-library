@@ -5,6 +5,7 @@ import hudson.tasks.test.AbstractTestResultAction
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 
 /**
  * @since 22/02/2017
@@ -63,5 +64,10 @@ class Utils implements Serializable {
         Path path = Paths.get(folder)
         Files.createDirectories(path)
         folder
+    }
+
+    static List<Path> getGrailsDirectoriesWithIntegrationTestFolders(String ws){
+        Path workspace = Paths.get(ws)
+        Files.walk(workspace).filter({path -> Files.exists(path.resolve('src/integration-test'))}).collect(Collectors.toList())
     }
 }

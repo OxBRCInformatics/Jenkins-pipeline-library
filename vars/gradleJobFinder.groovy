@@ -1,6 +1,8 @@
 #!/usr/bin/env groovy
 import uk.ac.ox.ndm.jenkins.Utils
 
+import java.nio.file.Path
+
 // ws = pwd() as String
 Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     Map jobs = [:]
@@ -8,10 +10,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
 
     echo "Workspace: ${workspace}"
 
-
-    def dirs = workspace.listFiles({File pathname -> pathname.isDirectory()} as FileFilter)
-
-    echo "Dirs: ${dirs}"
+    List<Path> dirs = Utils.getGrailsDirectoriesWithIntegrationTestFolders(ws)
 
     dirs.each {
         echo "Testing ${it}"
