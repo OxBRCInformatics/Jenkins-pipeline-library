@@ -24,7 +24,7 @@ Map call(String gradle) {
         String dirName = project.fileName.toString()
         jobs["${dirName}"] = {
             dir("${dirName}") {
-                sh "${gradle} dbmUpdate"
+                sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
             }
         }
     }
