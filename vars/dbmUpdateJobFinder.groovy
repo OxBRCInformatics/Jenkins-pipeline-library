@@ -12,10 +12,11 @@ Map call(String gradle) {
 
     File workspace = new File(pwd() as String)
     println "Workspace: ${workspace}:${workspace.exists()}"
-    workspace.eachDir { dir ->
-        println "Dir: ${dir}"
+
+    workspace.listFiles().each { lf ->
+        println "Dir: ${lf}"
         def props = null
-        dir.eachFile { f ->
+        lf.listFiles().each { f ->
             if(f.name == 'gradle.properties') props = f
         }
 
