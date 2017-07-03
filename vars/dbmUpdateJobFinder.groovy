@@ -2,7 +2,7 @@
  * @since 03/07/2017
  */
 
-Map call(String gradle, String pgPort) {
+Map call(gradle, pgPort) {
 
     //  String s = ''
     // s.readLines().find{it.startsWith('jenkinsPipelineIgnoreIntegrationTests')}
