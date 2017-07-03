@@ -2,7 +2,7 @@
  * @since 03/07/2017
  */
 
-Map call(String gradle) {
+Map call(String gradle, String pgPort) {
 
     //  String s = ''
     // s.readLines().find{it.startsWith('jenkinsPipelineIgnoreIntegrationTests')}
@@ -25,7 +25,7 @@ Map call(String gradle) {
             def res = props.readLines().any {line -> line.startsWith('dataSource')}
             if(res){
                 println "result"
-                String dirName = dir.name
+                String dirName = lf.name
                 jobs["${dirName}"] = {
                     dir("${dirName}") {
                         sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
