@@ -1,7 +1,3 @@
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
 /**
  * @since 03/07/2017
  */
@@ -12,8 +8,9 @@ Map call(String gradle) {
     // s.readLines().find{it.startsWith('jenkinsPipelineIgnoreIntegrationTests')}
 
     Map jobs = [failFast: true]
-    Path workspace = Paths.get(pwd() as String)
 
+
+    File workspace = new File(pwd() as String)
 
     workspace.eachDir { dir ->
         def files = dir.listFiles({p,name -> name == 'gradle.properties'} as FilenameFilter)
@@ -32,6 +29,8 @@ Map call(String gradle) {
     }
 
 /*
+
+Path workspace = Paths.get(pwd() as String)
     Files.walk(workspace)
             .filter({path -> Files.exists(path.resolve('gradle.properties'))})
             .filter({path ->
