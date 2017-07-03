@@ -1,47 +1,40 @@
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 /**
  * @since 03/07/2017
  */
 
 Map call(gradle, pgPort) {
 
-    //  String s = ''
-    // s.readLines().find{it.startsWith('jenkinsPipelineIgnoreIntegrationTests')}
-
-    Map jobs = [failFast:true]
-
+    Map jobs = [failFast: true]
     File workspace = new File(pwd() as String)
-    println "Workspace: ${workspace}:${workspace.exists()}"
+    println "Workspace: ${workspace}"
 
     List<File> files = workspace.listFiles()
 
     for (int i = 0; i < files.size(); i++) {
-        File lf = files[i]
-        if (lf.isDirectory()) {
-            def props = null
-            List<File> subFiles = lf.listFiles()
-            for (int j = 0; j < subFiles.size(); j++) {
-                if (subFiles[j].name == 'gradle.properties') props = subFiles[j]
-            }
-
-            if (props) {
-                def lines = props.readLines()
-                def res = false
-                for (int j = 0; j < lines.size(); j++) {
-                    if (lines[j].startsWith('dataSource')) {
-                        res = true
-                    }
+        File file = files[i]
+        Path props = Paths.get(file.path).resolve('gradle.properties')
+        if (Files.exists(props)) {
+            def lines = props.readLines()
+            def res = false
+            for (int j = 0; j < lines.size(); j++) {
+                if (lines[j].startsWith('dataSource')) {
+                    res = true
                 }
-                if (res) {
-                    println "${lf} gradle properties found with datasource"
-                    jobs[lf.name] = {
-                        node {
-                            stage('DB Update Checkout') {
-                                checkout scm
-                            }
-                            stage('DB Update') {
-                                dir(lf.name) {
-                                    sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
-                                }
+            }
+            if (res) {
+                println "${file} gradle properties found with datasource"
+                jobs[file.name] = {
+                    node {
+                        stage('DB Update Checkout') {
+                            checkout scm
+                        }
+                        stage('DB Update') {
+                            dir(file.name) {
+                                sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
                             }
                         }
                     }
@@ -49,6 +42,7 @@ Map call(gradle, pgPort) {
             }
         }
     }
+
 
 
     /*
