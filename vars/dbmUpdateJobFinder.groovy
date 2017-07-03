@@ -14,21 +14,22 @@ Map call(gradle, pgPort) {
     println "Workspace: ${workspace}:${workspace.exists()}"
 
     workspace.listFiles().each { lf ->
-        println "Dir: ${lf}"
-        def props = null
-        lf.listFiles().each { f ->
-            if(f.name == 'gradle.properties') props = f
-        }
 
-        if(props){
-            println "gradle properties found"
-            def res = props.readLines().any {line -> line.startsWith('dataSource')}
-            if(res){
-                println "result"
-                String dirName = lf.name
-                jobs["${dirName}"] = {
-                    dir("${dirName}") {
-                        sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+        if(lf.isDirectory()) {
+            def props = null
+            lf.listFiles().each {f ->
+                if (f.name == 'gradle.properties') props = f
+            }
+
+            if (props) {
+                def res = props.readLines().any {line -> line.startsWith('dataSource')}
+                if (res) {
+                    println "${lf} gradle properties found with datasource"
+
+                    jobs[lf.name] = {
+                        dir(lf.name) {
+                            sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                        }
                     }
                 }
             }
