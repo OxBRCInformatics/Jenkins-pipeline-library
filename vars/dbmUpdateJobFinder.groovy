@@ -14,10 +14,13 @@ Map call(String gradle) {
     println "Workspace: ${workspace}:${workspace.exists()}"
     workspace.eachDir { dir ->
         println "Dir: ${dir}"
-        def files = dir.listFiles({p,name -> name == 'gradle.properties'} as FilenameFilter)
-        if(files){
+        def props = null
+        dir.eachFile { f ->
+            if(f.name == 'gradle.properties') props = f
+        }
+
+        if(props){
             println "gradle properties found"
-            def props = files.first()
             def res = props.readLines().any {line -> line.startsWith('dataSource')}
             if(res){
                 println "result"
