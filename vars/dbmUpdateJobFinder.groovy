@@ -41,6 +41,7 @@ Map call(gradle, pgPort) {
                 }
             }
         }
+        props = null
     }
 
 
