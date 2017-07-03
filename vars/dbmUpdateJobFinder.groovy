@@ -34,8 +34,15 @@ Map call(gradle, pgPort) {
                 if (res) {
                     println "${lf} gradle properties found with datasource"
                     jobs[lf.name] = {
-                        dir(lf.name) {
-                            sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                        node {
+                            stage('DB Update Checkout') {
+                                checkout scm
+                            }
+                            stage('DB Update') {
+                                dir(lf.name) {
+                                    sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                                }
+                            }
                         }
                     }
                 }
