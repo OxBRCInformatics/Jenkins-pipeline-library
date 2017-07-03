@@ -14,6 +14,24 @@ Map call(String gradle) {
     Map jobs = [failFast: true]
     Path workspace = Paths.get(pwd() as String)
 
+
+    workspace.eachDir { dir ->
+        def files = dir.listFiles({p,name -> name == 'gradle.properties'} as FilenameFilter)
+        if(files){
+            def props = files.first()
+            def res = props.readLines().any {line -> line.startsWith('dataSource')}
+            if(res){
+                String dirName = dir.name
+                jobs["${dirName}"] = {
+                    dir("${dirName}") {
+                        sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                    }
+                }
+            }
+        }
+    }
+
+/*
     Files.walk(workspace)
             .filter({path -> Files.exists(path.resolve('gradle.properties'))})
             .filter({path ->
@@ -28,5 +46,6 @@ Map call(String gradle) {
             }
         }
     }
+    */
     jobs
 }
