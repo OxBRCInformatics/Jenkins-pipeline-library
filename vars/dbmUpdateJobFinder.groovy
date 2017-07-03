@@ -26,8 +26,8 @@ Map call(gradle, pgPort) {
                 }
             }
             if (res) {
-                println "${file} gradle properties found with datasource"
-                jobs[file.name] = {
+                println "${file.name} gradle properties found with datasource"
+                jobs["${file.name}"] = {
                     node {
                         stage('DB Update Checkout') {
                             checkout scm
