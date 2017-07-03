@@ -2,12 +2,12 @@
  * @since 03/07/2017
  */
 
-Map call(gradle, pgPort) {
+List call(gradle, pgPort) {
 
     //  String s = ''
     // s.readLines().find{it.startsWith('jenkinsPipelineIgnoreIntegrationTests')}
 
-    Map jobs = [failFast: true]
+    List jobs = []
 
 
     File workspace = new File(pwd() as String)
@@ -25,12 +25,7 @@ Map call(gradle, pgPort) {
                 def res = props.readLines().any {line -> line.startsWith('dataSource')}
                 if (res) {
                     println "${lf} gradle properties found with datasource"
-
-                    jobs[lf.name] = {
-                        dir(lf.name) {
-                            sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
-                        }
-                    }
+                    jobs += lf.name
                 }
             }
         }
