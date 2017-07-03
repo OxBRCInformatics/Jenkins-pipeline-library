@@ -25,7 +25,7 @@ List call(gradle, pgPort) {
                 def res = props.readLines().any {line -> line.startsWith('dataSource')}
                 if (res) {
                     println "${lf} gradle properties found with datasource"
-                    jobs += lf.name
+                    jobs.add(lf.name)
                 }
             }
         }
