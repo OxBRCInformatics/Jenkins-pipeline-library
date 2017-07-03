@@ -5,6 +5,32 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+
+Map getDbmUpdateJobs(String gradle) {
+
+  //  String s = ''
+   // s.readLines().find{it.startsWith('jenkinsPipelineIgnoreIntegrationTests')}
+
+    Map jobs = [failFast: true]
+    Path workspace = Paths.get(pwd() as String)
+
+    Files.walk(workspace)
+            .filter({path -> Files.exists(path.resolve('gradle.properties'))})
+            .filter({path ->
+        Files.readAllLines(path.resolve('gradle.properties')).any {line ->
+            line.startsWith('dataSource')
+        }
+    }).each {project ->
+        String dirName = project.fileName.toString()
+        jobs["${dirName}"] = {
+            dir("${dirName}") {
+                sh "${gradle} dbmUpdate"
+            }
+        }
+    }
+    jobs
+}
+
 // ws = pwd() as String
 Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     Map jobs = [:]
@@ -13,10 +39,9 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
     List<File> files = workspace.listFiles()
 
     for(File file : files){
-        Path path = Paths.get(file.path)
-        if (Files.exists(path.resolve('src/integration-test'))) {
+        if (Files.exists(Paths.get(file.path).resolve('src/integration-test'))) {
 
-            String dirName = path.fileName.toString()
+            String dirName = file.name
             jobs[dirName] = {
 
                 node {
@@ -37,7 +62,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
                         rabbit.withRun("-p ${rPort}:5672") {
                             postgres.withRun("-p ${pgPort}:5432") {
                                 dir("${dirName}") {
-                                    sh "${gradle} dbmUpdate"
+                                    sh "${gradle} clean dbmUpdate"
                                     sh "${grails} test-app --integration"
                                 }
                             }
@@ -45,7 +70,7 @@ Map getGrailsIntegrationTestJobs(String gradle, String grails, String ws) {
                     }
 
                     stage('Integration Test Results') {
-                        junit allowEmptyResults: true, testResults: '**/build/test-results/*.xml'
+                        junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
                     }
                 }
 
