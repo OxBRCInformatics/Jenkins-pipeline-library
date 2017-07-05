@@ -1,3 +1,5 @@
+import uk.ac.ox.ndm.jenkins.Utils
+
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -5,7 +7,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String workspacePath, pgPort, rPort, int timeoutMins = 15, boolean failFast = false) {
+Map call(String workspacePath, int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -14,8 +16,8 @@ Map call(String workspacePath, pgPort, rPort, int timeoutMins = 15, boolean fail
 
     List<String> lines = Paths.get(workspacePath).resolve('gradle.properties').readLines()
     for (int i = 0; i < lines.size(); i++) {
-        if (lines[i].startsWith('jenkinsPipelineIgnoreTests')) {
-            ignore = lines[i].replaceFirst(/jenkinsPipelineIgnoreTests=/, '').split(',')
+        if (lines[i].startsWith('jenkinsPipelineIgnoreIntegrationTests')) {
+            ignore = lines[i].replaceFirst(/jenkinsPipelineIgnoreIntegrationTests=/, '').split(',')
         }
     }
 
@@ -30,9 +32,24 @@ Map call(String workspacePath, pgPort, rPort, int timeoutMins = 15, boolean fail
                 jobs[file.name] = {
                     node {
                         timeout(timeoutMins) {
-                            dir(file.path) {
-                                stage('Integration Test') {
-                                    sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
+
+                            stage('Integration Test') {
+
+                                def pgPort = Utils.findFreeTcpPort()
+                                def rPort = Utils.findFreeTcpPort()
+
+                                echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
+
+                                def postgres = docker.build('m_postgres', 'test-utils/src/main/dockerfiles/postgres')
+                                def rabbit = docker.build('m_rabbit', 'test-utils/src/main/dockerfiles/rabbitmq')
+
+                                rabbit.withRun("-p ${rPort}:5672") {
+                                    postgres.withRun("-p ${pgPort}:5432") {
+                                        dir(file.path) {
+                                            sh "${gradle} clean dbmUpdate"
+                                            sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
+                                        }
+                                    }
                                 }
                             }
                         }
