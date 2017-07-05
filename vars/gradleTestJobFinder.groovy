@@ -5,9 +5,9 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(gradle) {
+Map call(gradle, codebase) {
 
-    Map jobs = [failFast: true]
+    Map jobs = [:]
     File workspace = new File(pwd() as String)
     println "Workspace: ${workspace}"
     List<String> ignore = []
@@ -31,7 +31,7 @@ Map call(gradle) {
                 jobs[dirName] = {
                     node {
                         stage('Unit Test Checkout') {
-                            checkout scm
+                            unstash codebase
                         }
 
                         stage('Unit Test') {
