@@ -10,6 +10,14 @@ Map call(gradle) {
     Map jobs = [failFast: true]
     File workspace = new File(pwd() as String)
     println "Workspace: ${workspace}"
+    List<String> ignore = []
+
+    List<String> lines = Paths.get(workspace.path).resolve('gradle.properties').readLines()
+    for (int i = 0; i < lines.size(); i++) {
+        if(lines[i].startsWith('jenkinsPipelineIgnoreTests')){
+            ignore = lines[i].replaceFirst(/jenkinsPipelineIgnoreTests=/,'').split(',')
+        }
+    }
 
     List<File> files = workspace.listFiles()
 
@@ -19,21 +27,23 @@ Map call(gradle) {
         if (Files.exists(Paths.get(file.path).resolve('src/test'))) {
             println "Unit tests found for ${file}"
             String dirName = file.name
-            jobs[dirName] = {
-                node {
-                    stage('Unit Test Checkout') {
-                        checkout scm
-                    }
-
-                    stage('Unit Test') {
-                        dir("${dirName}") {
-                            sh "${gradle} test"
+            if(!(dirName in ignore)) {
+                jobs[dirName] = {
+                    node {
+                        stage('Unit Test Checkout') {
+                            checkout scm
                         }
-                    }
 
-                    stage('Unit Test Results') {
-                        dir("${dirName}") {
-                            junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
+                        stage('Unit Test') {
+                            dir("${dirName}") {
+                                sh "${gradle} test"
+                            }
+                        }
+
+                        stage('Unit Test Results') {
+                            dir("${dirName}") {
+                                junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
+                            }
                         }
                     }
                 }
