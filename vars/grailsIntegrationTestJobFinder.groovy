@@ -5,7 +5,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String gradle, String workspacePath) {
+Map call(String workspacePath) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -24,14 +24,14 @@ Map call(String gradle, String workspacePath) {
     for (int i = 0; i < files.size(); i++) {
 
         File file = files[i]
-        if (Files.exists(Paths.get(file.path).resolve('src/test'))) {
+        if (Files.exists(Paths.get(file.path).resolve('src/integration-test'))) {
             if (!(file.name in ignore)) {
-                println "Unit tests found for ${file}"
+                println "Integation tests found for ${file}"
                 jobs[file.name] = {
                     node {
                         dir(file.path) {
-                            stage('Unit Test') {
-                                sh "${gradle} test"
+                            stage('Integration Test') {
+                                sh "grails test-app --integration"
                             }
                         }
                     }
