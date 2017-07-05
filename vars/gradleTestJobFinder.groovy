@@ -51,5 +51,6 @@ Map call(gradle, codebase) {
         }
 
     }
+    jobs.failFast = true
     jobs
 }
