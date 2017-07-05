@@ -44,6 +44,7 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
                                         dir(file.path) {
                                             sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
                                             sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
+                                            junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                                         }
                                     }
                                 }
