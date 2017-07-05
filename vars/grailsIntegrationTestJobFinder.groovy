@@ -42,7 +42,7 @@ Map call(String gradle, String workspacePath, postgres, rabbit, int timeoutMins 
                                 rabbit.withRun("-p ${rPort}:5672") {
                                     postgres.withRun("-p ${pgPort}:5432") {
                                         dir(file.path) {
-                                            sh "${gradle} dbmUpdate"
+                                            sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
                                             sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
                                         }
                                     }
