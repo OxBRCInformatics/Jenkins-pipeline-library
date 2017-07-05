@@ -9,7 +9,6 @@ Map call(String gradle, String workspacePath, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
-    println "Workspace: ${workspace}"
     List<String> ignore = []
 
     List<String> lines = Paths.get(workspacePath).resolve('gradle.properties').readLines()
@@ -26,7 +25,7 @@ Map call(String gradle, String workspacePath, boolean failFast = false) {
         File file = files[i]
         if (Files.exists(Paths.get(file.path).resolve('src/test'))) {
             if (!(file.name in ignore)) {
-                println "Unit tests found for ${file}"
+                echo "Unit tests found for ${file}"
                 jobs[file.name] = {
                     node {
                         dir(file.path) {

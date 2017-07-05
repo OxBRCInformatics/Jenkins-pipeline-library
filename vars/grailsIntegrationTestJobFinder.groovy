@@ -7,11 +7,10 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String workspacePath, int timeoutMins = 15, boolean failFast = false) {
+Map call(String gradle, String workspacePath, postgres, rabbit, int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
-    println "Workspace: ${workspace}"
     List<String> ignore = []
 
     List<String> lines = Paths.get(workspacePath).resolve('gradle.properties').readLines()
@@ -28,7 +27,7 @@ Map call(String workspacePath, int timeoutMins = 15, boolean failFast = false) {
         File file = files[i]
         if (Files.exists(Paths.get(file.path).resolve('src/integration-test'))) {
             if (!(file.name in ignore)) {
-                println "Integation tests found for ${file}"
+                echo "Integation tests found for ${file}"
                 jobs[file.name] = {
                     node {
                         timeout(timeoutMins) {
@@ -40,13 +39,10 @@ Map call(String workspacePath, int timeoutMins = 15, boolean failFast = false) {
 
                                 echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
 
-                                def postgres = docker.build('m_postgres', 'test-utils/src/main/dockerfiles/postgres')
-                                def rabbit = docker.build('m_rabbit', 'test-utils/src/main/dockerfiles/rabbitmq')
-
                                 rabbit.withRun("-p ${rPort}:5672") {
                                     postgres.withRun("-p ${pgPort}:5432") {
                                         dir(file.path) {
-                                            sh "${gradle} clean dbmUpdate"
+                                            sh "${gradle} dbmUpdate"
                                             sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
                                         }
                                     }
