@@ -5,7 +5,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String workspacePath, pgPort, rPort, timeoutMins=15) {
+Map call(String workspacePath, pgPort, rPort, int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -42,6 +42,6 @@ Map call(String workspacePath, pgPort, rPort, timeoutMins=15) {
 
         }
     }
-    jobs.failFast = true
+    jobs.failFast = failFast
     jobs
 }

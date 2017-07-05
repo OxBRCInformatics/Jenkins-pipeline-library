@@ -5,7 +5,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String gradle, String workspacePath) {
+Map call(String gradle, String workspacePath, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -40,6 +40,6 @@ Map call(String gradle, String workspacePath) {
 
         }
     }
-    jobs.failFast = true
+    jobs.failFast = failFast
     jobs
 }
