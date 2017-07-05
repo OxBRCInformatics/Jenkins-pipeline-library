@@ -5,7 +5,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String workspacePath) {
+Map call(String workspacePath, pgPort, rPort) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -31,7 +31,7 @@ Map call(String workspacePath) {
                     node {
                         dir(file.path) {
                             stage('Integration Test') {
-                                sh "grails test-app --integration"
+                                sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
                             }
                         }
                     }
