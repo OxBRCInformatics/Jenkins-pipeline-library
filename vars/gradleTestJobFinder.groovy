@@ -35,11 +35,6 @@ Map call(String gradle, String workspacePath) {
                             stage('Unit Test') {
                                 sh "${gradle} test"
                             }
-
-                            stage('Unit Test Results') {
-                                junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
-                            }
-
                         }
                     }
                 }
