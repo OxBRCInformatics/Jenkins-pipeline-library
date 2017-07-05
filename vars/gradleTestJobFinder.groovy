@@ -5,14 +5,14 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(gradle, codebase) {
+Map call(String gradle, String workspacePath) {
 
     Map jobs = [:]
-    File workspace = new File(pwd() as String)
+    File workspace = new File(workspacePath)
     println "Workspace: ${workspace}"
     List<String> ignore = []
 
-    List<String> lines = Paths.get(workspace.path).resolve('gradle.properties').readLines()
+    List<String> lines = Paths.get(workspacePath).resolve('gradle.properties').readLines()
     for (int i = 0; i < lines.size(); i++) {
         if(lines[i].startsWith('jenkinsPipelineIgnoreTests')){
             ignore = lines[i].replaceFirst(/jenkinsPipelineIgnoreTests=/,'').split(',')
@@ -30,18 +30,14 @@ Map call(gradle, codebase) {
             if(!(dirName in ignore)) {
                 jobs[dirName] = {
                     node {
-                        stage('Unit Test Checkout') {
-                            unstash codebase
-                        }
-
                         stage('Unit Test') {
-                            dir("${dirName}") {
+                            dir(file.path) {
                                 sh "${gradle} test"
                             }
                         }
 
                         stage('Unit Test Results') {
-                            dir("${dirName}") {
+                            dir(file.path) {
                                 junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                             }
                         }
