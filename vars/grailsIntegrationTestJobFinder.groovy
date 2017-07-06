@@ -7,7 +7,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-List call(String gradle, String workspacePath, postgres, rabbit, int groupSize = 1, int timeoutMins = 15, boolean failFast = false) {
+List call(String gradle, String workspacePath, postgres, rabbit, int groupSize = 0, int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -67,7 +67,7 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
         }
     }
     List groupedJobs = []
-    if (groupSize != 1) {
+    if (groupSize != 0) {
         Set jobset = jobs.keySet()
 
         for (int i = 0; i < (jobs.size() / groupSize); i++) {
