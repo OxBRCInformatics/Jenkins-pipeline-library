@@ -32,7 +32,7 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
                     node {
                         timeout(timeoutMins) {
 
-                            stage('Integration Test') {
+                            stage("${file.name} Integration Test") {
 
                                 def pgPort = Utils.findFreeTcpPort()
                                 def rPort = Utils.findFreeTcpPort()
