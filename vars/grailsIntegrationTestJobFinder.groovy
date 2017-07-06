@@ -46,6 +46,15 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
                                             sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
                                             junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                                             archiveArtifacts 'build/logs/*.log'
+                                            publishHTML([
+                                                    allowMissing         : true,
+                                                    alwaysLinkToLastBuild: true,
+                                                    keepAll              : false,
+                                                    reportDir            : 'build/reports/tests',
+                                                    reportFiles          : 'index.html',
+                                                    reportName           : "${file.name} Integration Test Report"
+                                            ])
+                                            outputTestResults()
                                         }
                                     }
                                 }
