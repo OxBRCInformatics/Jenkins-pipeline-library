@@ -30,32 +30,31 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
                 echo "Integation tests found for ${file}"
                 jobs[file.name] = {
                     node {
-                        timeout(timeoutMins) {
+                        stage("${file.name} Integration Test") {
 
-                            stage("${file.name} Integration Test") {
+                            def pgPort = Utils.findFreeTcpPort()
+                            def rPort = Utils.findFreeTcpPort()
 
-                                def pgPort = Utils.findFreeTcpPort()
-                                def rPort = Utils.findFreeTcpPort()
+                            echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
 
-                                echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
-
-                                rabbit.withRun("-p ${rPort}:5672") {
-                                    postgres.withRun("-p ${pgPort}:5432") {
-                                        dir(file.path) {
-                                            sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                            rabbit.withRun("-p ${rPort}:5672") {
+                                postgres.withRun("-p ${pgPort}:5432") {
+                                    dir(file.path) {
+                                        sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                                        timeout(timeoutMins) {
                                             sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
-                                            junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
-                                            archiveArtifacts 'build/logs/*.log'
-                                            publishHTML([
-                                                    allowMissing         : true,
-                                                    alwaysLinkToLastBuild: true,
-                                                    keepAll              : false,
-                                                    reportDir            : 'build/reports/tests',
-                                                    reportFiles          : 'index.html',
-                                                    reportName           : "${file.name} Integration Test Report"
-                                            ])
-                                            outputTestResults()
                                         }
+                                        junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
+                                        archiveArtifacts 'build/logs/*.log'
+                                        publishHTML([
+                                                allowMissing         : true,
+                                                alwaysLinkToLastBuild: true,
+                                                keepAll              : false,
+                                                reportDir            : 'build/reports/tests',
+                                                reportFiles          : 'index.html',
+                                                reportName           : "${file.name} Integration Test Report"
+                                        ])
+                                        outputTestResults()
                                     }
                                 }
                             }
