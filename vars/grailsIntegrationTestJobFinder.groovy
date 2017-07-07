@@ -35,7 +35,7 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
                             def pgPort = Utils.findFreeTcpPort()
                             def rPort = Utils.findFreeTcpPort()
 
-                            echo "Running postgres on port ${pgPort} & rabbit on port ${rPort}"
+                            echo "${file.name} running postgres on port ${pgPort} & rabbit on port ${rPort}"
 
                             rabbit.withRun("-p ${rPort}:5672") {
                                 postgres.withRun("-p ${pgPort}:5432") {
