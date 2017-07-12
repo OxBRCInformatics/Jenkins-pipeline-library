@@ -31,6 +31,8 @@ Map call(String workspacePath, String gradle = './gradlew', boolean failFast = f
                         dir(file.path) {
                             stage('Unit Test') {
                                 sh "${gradle} test"
+                                junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
+                                outputTestResults()
                             }
                         }
                     }
