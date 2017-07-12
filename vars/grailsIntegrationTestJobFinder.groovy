@@ -7,7 +7,8 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-List call(String gradle, String workspacePath, postgres, rabbit, int groupSize = 0, int timeoutMins = 15, boolean failFast = false) {
+List call(String workspacePath, postgres, rabbit, String gradle = './gradlew', String grails = './grailsw',
+          int groupSize = 0, int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -42,7 +43,7 @@ List call(String gradle, String workspacePath, postgres, rabbit, int groupSize =
                                     dir(file.path) {
                                         sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
                                         timeout(timeoutMins) {
-                                            sh "grails -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
+                                            sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
                                         }
                                         junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                                         publishHTML([

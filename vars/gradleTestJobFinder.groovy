@@ -5,7 +5,7 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-Map call(String gradle, String workspacePath, boolean failFast = false) {
+Map call(String workspacePath, String gradle = './gradlew', boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
