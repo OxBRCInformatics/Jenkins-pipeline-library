@@ -3,7 +3,7 @@ import uk.ac.ox.ndm.jenkins.Utils
 
 def call(String owningProject = 'Jenkins', boolean sendToNhsd = true) {
     // build status of null means successful
-    String buildStatus = currentBuild.result ?: 'SUCCESS'
+    String buildStatus = currentBuild.currentResult
 
     String baseName = env.JOB_BASE_NAME
     baseName = baseName.replaceAll(/%2F/, '/')
