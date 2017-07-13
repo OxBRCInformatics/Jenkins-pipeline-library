@@ -41,9 +41,10 @@ List call(String workspacePath, postgres, rabbit, String gradle = './gradlew', S
                             rabbit.withRun("-p ${rPort}:5672") {
                                 postgres.withRun("-p ${pgPort}:5432") {
                                     dir(file.path) {
-                                        sh "${gradle} -Ddatabase.port=${pgPort} dbmUpdate"
+                                        sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
                                         timeout(timeoutMins) {
-                                            sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} test-app --integration"
+                                            sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
+                                               "test-app --integration"
                                         }
                                         junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                                         publishHTML([

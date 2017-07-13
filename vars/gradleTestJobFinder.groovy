@@ -30,7 +30,7 @@ Map call(String workspacePath, String gradle = './gradlew', boolean failFast = f
                     node {
                         dir(file.path) {
                             stage('Unit Test') {
-                                sh "${gradle} test"
+                                sh "${gradle} -Dorg.gradle.daemon=false test"
                                 junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                                 outputTestResults()
                             }
