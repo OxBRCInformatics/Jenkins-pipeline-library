@@ -8,7 +8,7 @@ import java.nio.file.Paths
  */
 
 List call(String workspacePath, postgres, rabbit, String gradle = './gradlew', String grails = './grailsw',
-          int groupSize = 0, int timeoutMins = 15, boolean failFast = false) {
+          int groupSize = 0, String grailsVersion = null, int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -41,6 +41,10 @@ List call(String workspacePath, postgres, rabbit, String gradle = './gradlew', S
                             rabbit.withRun("-p ${rPort}:5672") {
                                 postgres.withRun("-p ${pgPort}:5432") {
                                     dir(file.path) {
+                                        if(grailsVersion){
+                                            // Add grails version to properties file to get the grails wrapper to work
+                                            sh "printf '\\n${grailsVersion}' >> gradle.properties"
+                                        }
                                         sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
                                         timeout(timeoutMins) {
                                             sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
