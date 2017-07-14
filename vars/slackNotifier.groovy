@@ -1,8 +1,7 @@
 #!/usr/bin/env groovy
 import uk.ac.ox.ndm.jenkins.Utils
 
-def call(String owningProject = 'Jenkins', boolean sendToNhsd = true) {
-    // build status of null means successful
+def call() {
     String buildStatus = currentBuild.currentResult
 
     String baseName = env.JOB_BASE_NAME
@@ -31,9 +30,6 @@ def call(String owningProject = 'Jenkins', boolean sendToNhsd = true) {
 
     // Send notifications
     slackSend(color: colour, message: message)
-    if (sendToNhsd)
-        slackSend(color: colour, message: message,
-                  channel: '#development', teamDomain: 'nhsdigitalssdgenomics', token: 'X1DrnvdZfv5ZF4qeuE9Gj5TN')
 }
 
 
