@@ -1,3 +1,5 @@
+import uk.ac.ox.ndm.jenkins.Utils
+
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -9,14 +11,9 @@ Map call(String workspacePath, String gradle = './gradlew', boolean failFast = f
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
-    List<String> ignore = []
 
-    List<String> lines = Paths.get(workspacePath).resolve('gradle.properties').readLines()
-    for (int i = 0; i < lines.size(); i++) {
-        if (lines[i].startsWith('jenkinsPipelineIgnoreTests')) {
-            ignore = lines[i].replaceFirst(/jenkinsPipelineIgnoreTests=/, '').split(',')
-        }
-    }
+    String ignoreTests = Utils.findProperty(workspacePath,'gradle.properties', 'jenkinsPipelineIgnoreTests')
+    List<String> ignore = ignoreTests ? ignoreTests.split(',') : []
 
     List<File> files = workspace.listFiles()
 

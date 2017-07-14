@@ -13,14 +13,9 @@ List call(String workspacePath, postgres, rabbit, int groupSize = 0,
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
-    List<String> ignore = []
 
-    List<String> lines = Paths.get(workspacePath).resolve('gradle.properties').readLines()
-    for (int i = 0; i < lines.size(); i++) {
-        if (lines[i].startsWith('jenkinsPipelineIgnoreIntegrationTests')) {
-            ignore = lines[i].replaceFirst(/jenkinsPipelineIgnoreIntegrationTests=/, '').split(',')
-        }
-    }
+    String ignoreTests = Utils.findProperty(workspacePath,'gradle.properties', 'jenkinsPipelineIgnoreIntegrationTests')
+    List<String> ignore = ignoreTests ? ignoreTests.split(',') : []
 
     List<File> files = workspace.listFiles()
 
