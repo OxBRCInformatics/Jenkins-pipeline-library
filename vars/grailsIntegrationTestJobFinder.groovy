@@ -39,7 +39,7 @@ List call(String workspacePath, postgres, rabbit, int groupSize = 0,
                                     dir(file.path) {
                                         if(grailsVersion){
                                             // Add grails version to properties file to get the grails wrapper to work
-                                            sh "printf '\\n${grailsVersion}' >> gradle.properties"
+                                            sh "printf '\\ngrailsVersion=${grailsVersion}' >> gradle.properties"
                                         }
                                         sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
                                         timeout(timeoutMins) {
