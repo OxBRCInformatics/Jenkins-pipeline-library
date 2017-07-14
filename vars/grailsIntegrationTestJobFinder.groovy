@@ -7,8 +7,9 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-List call(String workspacePath, postgres, rabbit, String gradle = './gradlew', String grails = './grailsw',
-          int groupSize = 0, String grailsVersion = null, int timeoutMins = 15, boolean failFast = false) {
+List call(String workspacePath, postgres, rabbit, int groupSize = 0,
+          String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null,
+          int timeoutMins = 15, boolean failFast = false) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
