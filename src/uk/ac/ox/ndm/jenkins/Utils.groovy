@@ -65,4 +65,22 @@ class Utils implements Serializable {
         Files.createDirectories(path)
         folder
     }
+
+    static String findProperty(String filename,String propertyName){
+
+        File f = new File(filename)
+        if(f.exists()){
+            List<String> lines = f.readLines()
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines[i]
+                if(line){
+                    String[] keyValue = line.split('=')
+                    if(keyValue.size() == 2){
+                        if(keyValue[0] == propertyName) return keyValue[1]
+                    }
+                }
+            }
+        }
+        null
+    }
 }
