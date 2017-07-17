@@ -19,6 +19,8 @@ List call(String workspacePath, postgres, rabbit, int groupSize = 0,
 
     List<File> files = workspace.listFiles()
 
+    if (!files) return jobs
+
     for (int i = 0; i < files.size(); i++) {
 
         File file = files[i]

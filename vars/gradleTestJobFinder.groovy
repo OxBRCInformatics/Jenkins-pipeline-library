@@ -17,6 +17,8 @@ Map call(String workspacePath, String gradle = './gradlew', boolean failFast = f
 
     List<File> files = workspace.listFiles()
 
+    if(!files) return jobs
+
     for (int i = 0; i < files.size(); i++) {
 
         File file = files[i]
