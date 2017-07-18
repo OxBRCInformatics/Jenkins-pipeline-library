@@ -70,7 +70,7 @@ List call(String workspacePath, postgres, rabbit, int groupSize = 0,
     }
     List groupedJobs = []
     if (groupSize != 0) {
-        Set jobset = jobs.keySet()
+        List jobset = jobs.keySet().toList().sort()
 
         for (int i = 0; i < (jobs.size() / groupSize); i++) {
             int key = i * groupSize

@@ -41,5 +41,5 @@ Map call(String workspacePath, String gradle = './gradlew', boolean failFast = f
         }
     }
     jobs.failFast = failFast
-    jobs
+    jobs.sort()
 }
