@@ -70,4 +70,5 @@ List call(String workspacePath, postgres, rabbit,
     }
 
         jobs.failFast = failFast
+    jobs
 }
