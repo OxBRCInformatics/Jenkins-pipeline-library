@@ -29,6 +29,10 @@ List call(String workspacePath, postgres, rabbit, int groupSize = 0,
                 echo "Integation tests found for ${file}"
                 jobs[file.name] = {
                     node {
+                        stage('IT Checkout') {
+                            checkout scm
+                        }
+
                         stage("${file.name} Integration Test") {
 
                             def pgPort = Utils.findFreeTcpPort()
