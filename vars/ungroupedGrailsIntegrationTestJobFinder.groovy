@@ -28,7 +28,7 @@ List call(String workspacePath, postgres, rabbit,
             if (!(file.name in ignore)) {
                 echo "Integation tests found for ${file}"
                 jobs[file.name] = {
-                   node {
+
                        stage("${file.name} Integration Test") {
 
                            def pgPort = Utils.findFreeTcpPort()
@@ -62,7 +62,7 @@ List call(String workspacePath, postgres, rabbit,
                                }
                            }
                        }
-                   }
+
                 }
             }
 
