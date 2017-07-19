@@ -14,7 +14,7 @@ List call(String workspacePath, postgres, rabbit,
     Map jobs = [:]
     File workspace = new File(workspacePath)
 
-    String ignoreTests = Utils.findProperty(workspacePath, 'gradle.properties', 'jenkinsPipelineIgnoreIntegrationTests')
+    String ignoreTests = Utils.findProperty(workspacePath,'gradle.properties', 'jenkinsPipelineIgnoreIntegrationTests')
     List<String> ignore = ignoreTests ? ignoreTests.split(',') : []
 
     List<File> files = workspace.listFiles()
@@ -27,46 +27,47 @@ List call(String workspacePath, postgres, rabbit,
         if (Files.exists(Paths.get(file.path).resolve('src/integration-test'))) {
             if (!(file.name in ignore)) {
                 echo "Integation tests found for ${file}"
-                jobs[file.name] =
+                jobs[file.name] = {
+                   node {
+                       stage("${file.name} Integration Test") {
 
-                    stage("${file.name} Integration Test") {
+                           def pgPort = Utils.findFreeTcpPort()
+                           def rPort = Utils.findFreeTcpPort()
 
-                        def pgPort = Utils.findFreeTcpPort()
-                        def rPort = Utils.findFreeTcpPort()
+                           echo "${file.name} running postgres on port ${pgPort} & rabbit on port ${rPort}"
 
-                        echo "${file.name} running postgres on port ${pgPort} & rabbit on port ${rPort}"
-
-                        rabbit.withRun("-p ${rPort}:5672") {
-                            postgres.withRun("-p ${pgPort}:5432") {
-                                dir(file.path) {
-                                    if (grailsVersion) {
-                                        // Add grails version to properties file to get the grails wrapper to work
-                                        sh "printf '\\ngrailsVersion=${grailsVersion}' >> gradle.properties"
-                                    }
-                                    sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
-                                    timeout(timeoutMins) {
-                                        sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
-                                           "test-app --integration"
-                                    }
-                                    junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
-                                    publishHTML([
-                                            allowMissing         : true,
-                                            alwaysLinkToLastBuild: true,
-                                            keepAll              : false,
-                                            reportDir            : 'build/reports/tests',
-                                            reportFiles          : 'index.html',
-                                            reportName           : "${file.name} Integration Test Report"
-                                    ])
-                                    outputTestResults()
-                                }
-                            }
-                        }
-                    }
+                           rabbit.withRun("-p ${rPort}:5672") {
+                               postgres.withRun("-p ${pgPort}:5432") {
+                                   dir(file.path) {
+                                       if (grailsVersion) {
+                                           // Add grails version to properties file to get the grails wrapper to work
+                                           sh "printf '\\ngrailsVersion=${grailsVersion}' >> gradle.properties"
+                                       }
+                                       sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
+                                       timeout(timeoutMins) {
+                                           sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
+                                              "test-app --integration"
+                                       }
+                                       junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
+                                       publishHTML([
+                                               allowMissing         : true,
+                                               alwaysLinkToLastBuild: true,
+                                               keepAll              : false,
+                                               reportDir            : 'build/reports/tests',
+                                               reportFiles          : 'index.html',
+                                               reportName           : "${file.name} Integration Test Report"
+                                       ])
+                                       outputTestResults()
+                                   }
+                               }
+                           }
+                       }
+                   }
+                }
             }
 
         }
     }
 
-    jobs.failFast = failFast
-    jobs
+        jobs.failFast = failFast
 }
