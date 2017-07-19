@@ -27,7 +27,7 @@ List call(String workspacePath, postgres, rabbit,
         if (Files.exists(Paths.get(file.path).resolve('src/integration-test'))) {
             if (!(file.name in ignore)) {
                 echo "Integation tests found for ${file}"
-                jobs[file.name] = {
+                jobs[file.name] =
 
                        stage("${file.name} Integration Test") {
 
@@ -63,7 +63,7 @@ List call(String workspacePath, postgres, rabbit,
                            }
                        }
 
-                }
+
             }
 
         }
