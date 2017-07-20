@@ -41,12 +41,16 @@ void call(String workspacePath, postgres, rabbit,
                                     // Add grails version to properties file to get the grails wrapper to work
                                     sh "printf '\\ngrailsVersion=${grailsVersion}' >> gradle.properties"
                                 }
-                                timeout(timeoutMins) {
-                                    sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
+                                retry(2) {
+                                    timeout(timeoutMins) {
+                                        sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
+                                    }
                                 }
-                                timeout(timeoutMins) {
-                                    sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
-                                       "test-app --integration"
+                                retry(2) {
+                                    timeout(timeoutMins) {
+                                        sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
+                                           "test-app --integration"
+                                    }
                                 }
                                 junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
                                 publishHTML([
