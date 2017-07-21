@@ -8,7 +8,8 @@ import java.nio.file.Paths
  */
 
 void call(String workspacePath, postgres, rabbit,
-          String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null, int timeoutMins = 15) {
+          String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null, int dbmUpdateTimeoutMins = 15,
+          int testTimeoutMins = 15) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -42,12 +43,12 @@ void call(String workspacePath, postgres, rabbit,
                                     sh "printf '\\ngrailsVersion=${grailsVersion}' >> gradle.properties"
                                 }
                                 retry(2) {
-                                    timeout(timeoutMins) {
+                                    timeout(dbmUpdateTimeoutMins) {
                                         sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
                                     }
                                 }
                                 retry(2) {
-                                    timeout(timeoutMins) {
+                                    timeout(testTimeoutMins) {
                                         sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
                                            "test-app --integration"
                                     }
