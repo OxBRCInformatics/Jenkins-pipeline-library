@@ -7,9 +7,9 @@ import java.nio.file.Paths
  * @since 03/07/2017
  */
 
-void call(String workspacePath, postgres, rabbit,
-          String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null, int dbmUpdateTimeoutMins = 15,
-          int testTimeoutMins = 15) {
+void call(String workspacePath, def postgres, def rabbit,
+          String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null, Integer dbmUpdateTimeoutMins = 15,
+          Integer testTimeoutMins = 15) {
 
     Map jobs = [:]
     File workspace = new File(workspacePath)
@@ -27,46 +27,10 @@ void call(String workspacePath, postgres, rabbit,
         if (Files.exists(Paths.get(file.path).resolve('src/integration-test'))) {
             if (!(file.name in ignore)) {
                 echo "Integation tests found for ${file}"
-
-                stage("${file.name} Integration Test") {
-
-                    def pgPort = Utils.findFreeTcpPort()
-                    def rPort = Utils.findFreeTcpPort()
-
-                    echo "${file.name} running postgres on port ${pgPort} & rabbit on port ${rPort}"
-
-                    rabbit.withRun("-p ${rPort}:5672") {
-                        postgres.withRun("-p ${pgPort}:5432") {
-                            dir(file.path) {
-                                if (grailsVersion) {
-                                    // Add grails version to properties file to get the grails wrapper to work
-                                    sh "printf '\\ngrailsVersion=${grailsVersion}' >> gradle.properties"
-                                }
-                                retry(2) {
-                                    timeout(dbmUpdateTimeoutMins) {
-                                        sh "${gradle} -Ddatabase.port=${pgPort} -Dorg.gradle.daemon=false dbmUpdate"
-                                    }
-                                }
-                                retry(2) {
-                                    timeout(testTimeoutMins) {
-                                        sh "${grails} -Ddatabase.port=${pgPort} -Drabbitmq.port=${rPort} -Dorg.gradle.daemon=false " +
-                                           "test-app --integration"
-                                    }
-                                }
-                                junit allowEmptyResults: true, testResults: 'build/test-results/**/*.xml'
-                                publishHTML([
-                                        allowMissing         : true,
-                                        alwaysLinkToLastBuild: true,
-                                        keepAll              : false,
-                                        reportDir            : 'build/reports/tests',
-                                        reportFiles          : 'index.html',
-                                        reportName           : "${file.name} Integration Test Report"
-                                ])
-                                outputTestResults()
-                            }
-                        }
-                    }
-                }
+                serialGrailsIntegrationTestJob(file.name, file.path,
+                                               postgres, rabbit,
+                                               gradle, grails, grailsVersion,
+                                               dbmUpdateTimeoutMins, testTimeoutMins)
             }
 
         }
