@@ -7,7 +7,7 @@ import uk.ac.ox.ndm.jenkins.Utils
 void call(String jobName, String dirPath,
           def postgres, def rabbit,
           String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null,
-          Integer dbmUpdateTimeoutMins = 15, Integer testTimeoutMins = 15 ){
+          Integer dbmUpdateTimeoutMins = 10, Integer testTimeoutMins = 15 ){
 
     stage("${jobName} Integration Test") {
 
