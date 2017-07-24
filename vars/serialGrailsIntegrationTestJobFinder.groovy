@@ -12,11 +12,10 @@ void call(String workspacePath,
           String gradle = './gradlew', String grails = './grailsw', String grailsVersion = null,
           Integer dbmUpdateTimeoutMins = 10, Integer testTimeoutMins = 15) {
 
-    Map jobs = [:]
     File workspace = new File(workspacePath)
 
     String ignoreTests = Utils.findProperty(workspacePath, 'gradle.properties', 'jenkinsPipelineIgnoreIntegrationTests')
-    List<String> ignore = ignoreTests ? ignoreTests.split(',') : []
+    List<String> ignore = ignoreTests ? ignoreTests.split(',') : [] as List<String>
 
     List<File> files = workspace.listFiles()
 
