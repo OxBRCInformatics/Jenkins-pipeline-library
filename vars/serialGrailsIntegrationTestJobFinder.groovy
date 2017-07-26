@@ -17,7 +17,7 @@ void call(String workspacePath,
     String ignoreTests = Utils.findProperty(workspacePath, 'gradle.properties', 'jenkinsPipelineIgnoreIntegrationTests')
     List<String> ignore = ignoreTests ? ignoreTests.split(',') : [] as List<String>
 
-    List<File> files = workspace.listFiles()
+    List<File> files = workspace.listFiles().sort()
 
     if (!files) return
 
