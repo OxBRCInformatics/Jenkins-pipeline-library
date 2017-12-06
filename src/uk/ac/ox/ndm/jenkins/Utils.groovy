@@ -27,6 +27,11 @@ class Utils implements Serializable {
         results
     }
 
+    boolean hasFailedTests(currentBuild){
+        AbstractTestResultAction testResultAction = currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+        testResultAction.failCount
+    }
+
     static String getTime(long start, long end) {
 
         long duration = end - start
