@@ -31,6 +31,7 @@ def call() {
                   "Time: ${timeString}\n" +
                   "${utils.getTestResults(currentBuild)}"
 
+    echo message
     // Send notifications
     slackSend(color: colour, message: message)
 }
