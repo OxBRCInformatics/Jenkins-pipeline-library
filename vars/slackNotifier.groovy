@@ -3,9 +3,8 @@ import uk.ac.ox.ndm.jenkins.Utils
 
 def call() {
     String buildStatus = currentBuild.currentResult
-
+    def utils = new Utils()
     if (!(buildStatus in ['FAILURE','UNSTABLE'])) {
-        def utils = new Utils()
         if (utils.hasFailedTests(currentBuild)) buildStatus = 'UNSTABLE'
     }
 
@@ -22,8 +21,6 @@ def call() {
         case 'FAILURE':
             colour = 'danger'
     }
-
-    echo colour
 
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
