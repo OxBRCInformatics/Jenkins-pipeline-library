@@ -3,12 +3,10 @@ import uk.ac.ox.ndm.jenkins.Utils
 
 def call() {
     String buildStatus = currentBuild.currentResult
-echo buildStatus
-    try {
+
+    if (!(buildStatus in ['FAILURE','UNSTABLE'])) {
         def utils = new Utils()
         if (utils.hasFailedTests(currentBuild)) buildStatus = 'UNSTABLE'
-    }catch(Exception ex){
-        echo ex.message
     }
 
     String baseName = env.JOB_BASE_NAME
@@ -25,15 +23,16 @@ echo buildStatus
             colour = 'danger'
     }
 
+    echo colour
 
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
 
-
     // Default values
     def message = "${jobName} [${baseName}] - #${env.BUILD_NUMBER} ${statusString} (<${env.BUILD_URL}|Open>)\n" +
-                  "Time: ${timeString}\n" +
-                  "${utils.getTestResults(currentBuild)}"
+                  "Time: ${timeString}"
+
+    if(buildStatus != 'FAILURE') message += "\n${utils.getTestResults(currentBuild)}"
 
     echo message
     // Send notifications
