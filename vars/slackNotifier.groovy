@@ -3,7 +3,7 @@ import uk.ac.ox.ndm.jenkins.Utils
 
 def call() {
     String buildStatus = currentBuild.currentResult
-
+echo buildStatus
     try {
         def utils = new Utils()
         if (utils.hasFailedTests(currentBuild)) buildStatus = 'UNSTABLE'
