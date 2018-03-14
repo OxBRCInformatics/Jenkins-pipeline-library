@@ -4,8 +4,12 @@ import uk.ac.ox.ndm.jenkins.Utils
 def call() {
     String buildStatus = currentBuild.currentResult
 
-    def utils = new Utils()
-    if(utils.hasFailedTests(currentBuild)) buildStatus = 'UNSTABLE'
+    try {
+        def utils = new Utils()
+        if (utils.hasFailedTests(currentBuild)) buildStatus = 'UNSTABLE'
+    }catch(Exception ex){
+        echo ex.message
+    }
 
     String baseName = env.JOB_BASE_NAME
     baseName = baseName.replaceAll(/%2F/, '/')
@@ -35,5 +39,3 @@ def call() {
     // Send notifications
     slackSend(color: colour, message: message)
 }
-
-
