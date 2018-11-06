@@ -9,11 +9,11 @@ def call(Integer MAX_BUILDS) {
     for (job in Jenkins.instance.items) {
         SortedMap<Integer, List<String>> sprint_paths_map = new TreeMap<Integer, List<String>>(new DescOrder());
 
-        manager.listener.logger.println "\n ***** Job Name: " + job.name + " *****"
+        echo "\n ***** Job Name: " + job.name + " *****"
 
         if (job.workspace != null && job.workspace != "") //Check if there is a workspace associated with the Job
         {
-            manager.listener.logger.println "Workspace path : " + job.workspace
+            echo "Workspace path : " + job.workspace
 
             String workspace = job.workspace
 
@@ -21,7 +21,7 @@ def call(Integer MAX_BUILDS) {
 
             if (folder != null && folder.exists()) //Check if the Workspace folder exists
             {
-                manager.listener.logger.println "Folder exists"
+                echo "Folder exists"
                 // Get all files and folders within the Workspace of current job.
                 // Iterate through only folders and sort em by Modified Date.
 
@@ -55,17 +55,17 @@ def call(Integer MAX_BUILDS) {
                     if (count >= MAX_BUILDS) {
                         deleteFolders(entry.getValue())
                     } else {
-                        manager.listener.logger.println "Save - " + entry
+                        echo "Save - " + entry
                     }
 
                     count++
                 }
 
             } else {
-                manager.listener.logger.println "Workspace is empty or doesn't exist"
+                echo "Workspace is empty or doesn't exist"
             }
         } else {
-            manager.listener.logger.println "No Workspace is associated with this job"
+            echo "No Workspace is associated with this job"
         }
 
     }
@@ -73,7 +73,7 @@ def call(Integer MAX_BUILDS) {
     long endTime = System.currentTimeMillis();
     long totalTime = (endTime - startTime) / 1000;
 
-    manager.listener.logger.println "Total Run time in seconds : " + totalTime
+    echo "Total Run time in seconds : " + totalTime
 
 }
 
@@ -81,14 +81,14 @@ def call(Integer MAX_BUILDS) {
 
 void deleteFolders(List<String> paths) {
 
-    manager.listener.logger.println "To Delete"
+    echo "To Delete"
 
     for (String path : paths) {
         File file = new File(path)
 
         if (!file.isFile() && file.exists()) {
           //  file.deleteDir()
-            manager.listener.logger.println "Deleted -" + path
+            echo "Deleted -" + path
         }
     }
 }

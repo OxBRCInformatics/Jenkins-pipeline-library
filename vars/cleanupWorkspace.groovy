@@ -4,17 +4,17 @@ import jenkins.*
 import jenkins.model.*
 
 def call(Integer MAX_BUILDS) {
-    //manager.listener.logger.println new Date(System.currentTimeMillis()).format('MM/dd/yyyy hh:mm:ss a') + " / " + " -- Start Time"
+    //echo new Date(System.currentTimeMillis()).format('MM/dd/yyyy hh:mm:ss a') + " / " + " -- Start Time"
 
     for (job in Jenkins.instance.items) {
 
         int count = 0
 
-        manager.listener.logger.println "\n ***Job Name: " + job.name + "***"
+        echo "\n ***Job Name: " + job.name + "***"
 
         if (job.workspace != null && job.workspace != "") //Check if there is a workspace associated with the Job
         {
-            manager.listener.logger.println "Workspace path : " + job.workspace
+            echo "Workspace path : " + job.workspace
 
             String workspace = job.workspace
 
@@ -32,9 +32,9 @@ def call(Integer MAX_BUILDS) {
                     if (!it.isFile()) //Check only for folders
                     {
                         if (count < MAX_BUILDS)
-                            manager.listener.logger.println new Date(it.lastModified()).format('MM/dd/yyyy hh:mm:ss a') + " /" + it.name + " -- Save"
+                            echo new Date(it.lastModified()).format('MM/dd/yyyy hh:mm:ss a') + " /" + it.name + " -- Save"
                         else {
-                            manager.listener.logger.println new Date(it.lastModified()).format('MM/dd/yyyy hh:mm:ss a') + " /" + it.name +
+                            echo new Date(it.lastModified()).format('MM/dd/yyyy hh:mm:ss a') + " /" + it.name +
                                                             " ** Deleted"
                            // it.deleteDir()
                         }
@@ -42,12 +42,12 @@ def call(Integer MAX_BUILDS) {
                     }
                 }
             } else {
-                manager.listener.logger.println "Workspace is empty or doesn't exist"
+                echo "Workspace is empty or doesn't exist"
             }
         } else {
-            manager.listener.logger.println "No Workspace associated with this job"
+            echo "No Workspace associated with this job"
         }
     }
 
-    //manager.listener.logger.println new Date(System.currentTimeMillis()).format('MM/dd/yyyy hh:mm:ss a') + " / " + " -- End Time"
+    //echo new Date(System.currentTimeMillis()).format('MM/dd/yyyy hh:mm:ss a') + " / " + " -- End Time"
 }
