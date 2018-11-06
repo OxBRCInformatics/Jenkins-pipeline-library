@@ -36,7 +36,7 @@ def call(Integer MAX_BUILDS) {
                         else {
                             manager.listener.logger.println new Date(it.lastModified()).format('MM/dd/yyyy hh:mm:ss a') + " /" + it.name +
                                                             " ** Deleted"
-                            it.deleteDir()
+                           // it.deleteDir()
                         }
                         count++
                     }
