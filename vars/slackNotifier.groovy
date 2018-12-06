@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 import uk.ac.ox.ndm.jenkins.Utils
 
-def call() {
+def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks/jenkins-ci/') {
     String buildStatus = currentBuild.currentResult
     def utils = new Utils()
     if (!(buildStatus in ['FAILURE','UNSTABLE'])) {
@@ -33,5 +33,5 @@ def call() {
 
     echo message
     // Send notifications
-    slackSend(color: colour, message: message)
+    slackSend(color: colour, message: message, baseUrl: baseUrl)
 }
