@@ -24,9 +24,11 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
 
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
-
+    def buildURL = env.BUILD_URL
+    def newBuildURL = buildURL.replace("job/${env.JOB_NAME}", "blue/organizations/jenkins/${env.JOB_NAME}")
+    newBuildURL = newBuildURL.replace("job/${env.BRANCH_NAME}", "detail/${env.BRANCH_NAME}")
     // Default values
-    def message = "${jobName} [${baseName}] - #${env.BUILD_NUMBER} ${statusString} (<${env.BUILD_URL}|Open>)\n" +
+    def message = "${jobName} [${baseName}] - #${env.BUILD_NUMBER} ${statusString} (<${newBuildURL}|Open>)\n" +
                   "Time: ${timeString}"
 
     if(buildStatus != 'FAILURE') message += "\n${utils.getTestResults(currentBuild)}"
