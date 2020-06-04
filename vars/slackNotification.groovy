@@ -12,8 +12,7 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
     baseName = baseName.replaceAll(/%2F/, '/')
 
     def jobName = env.JOB_NAME.substring(0, env.JOB_NAME.lastIndexOf('/'))
-echo env.JOB_NAME
-    echo jobName
+
     def colour = 'good'
     switch (buildStatus) {
         case 'UNSTABLE':
@@ -23,15 +22,19 @@ echo env.JOB_NAME
             colour = 'danger'
     }
     
-    echo env
+    def buildURL = env.BUILD_URL
+    echo buildURL
+    def urlJobName = jobName.replaceAll('/','%2F).replaceAll(' ','%20')
+    echo urlJobName
+    def newBuildURL = buildURL.replace("job/${urlJobName}", "blue/organizations/jenkins/${urlJobName}")
+    newBuildURL = newBuildURL.replace("job/${env.BRANCH_NAME}", "detail/${env.BRANCH_NAME}")
+    echo newBuildURL
+    
+    
 
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
-    def buildURL = env.BUILD_URL
-    echo buildURL
-    def newBuildURL = buildURL.replace("job/${env.JOB_NAME}", "blue/organizations/jenkins/${env.JOB_NAME}")
-    newBuildURL = newBuildURL.replace("job/${env.BRANCH_NAME}", "detail/${env.BRANCH_NAME}")
-    echo newBuildURL
+    
     // Default values
     def message = "${jobName} [${baseName}] - #${env.BUILD_NUMBER} ${statusString} (<${newBuildURL}|Open>)\n" +
                   "Time: ${timeString}"
