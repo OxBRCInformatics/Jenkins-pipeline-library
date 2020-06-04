@@ -22,11 +22,15 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
             colour = 'danger'
     }
     
+    def orgName = jobName.substring(0, jobName.lastIndexOf('/')).replaceAll(' ','%20')
+    def jName = jobName.substring(jobName.lastIndexOf('/')+1)
+
     def buildURL = env.BUILD_URL
     echo buildURL
     def urlJobName = jobName.replaceAll('/','%2F').replaceAll(' ','%20')
     echo urlJobName
-    def newBuildURL = buildURL.replace("job/${urlJobName}", "blue/organizations/jenkins/${urlJobName}")
+    def newBuildURL = buildURL.replace("job/${orgName}/job/${jName}", "blue/organizations/jenkins/${urlJobName}")
+    newBuildURL = newBuildURL.replace("job/${jobName}", "blue/organizations/jenkins/${jobName}")
     newBuildURL = newBuildURL.replace("job/${env.BRANCH_NAME}", "detail/${env.BRANCH_NAME}")
     echo newBuildURL
     
