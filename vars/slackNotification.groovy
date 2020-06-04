@@ -12,7 +12,8 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
     baseName = baseName.replaceAll(/%2F/, '/')
 
     def jobName = env.JOB_NAME.substring(0, env.JOB_NAME.lastIndexOf('/'))
-echo env.JOB_BASE_NAME
+echo env.JOB_NAME
+    echo jobName
     def colour = 'good'
     switch (buildStatus) {
         case 'UNSTABLE':
@@ -21,12 +22,14 @@ echo env.JOB_BASE_NAME
         case 'FAILURE':
             colour = 'danger'
     }
+    
+    echo env
 
     def statusString = buildStatus.toLowerCase().capitalize()
     def timeString = Utils.getTime(currentBuild.startTimeInMillis, System.currentTimeMillis())
     def buildURL = env.BUILD_URL
     echo buildURL
-    def newBuildURL = buildURL.replace("job/${env.JOB_BASE_NAME}", "blue/organizations/jenkins/${env.JOB_BASE_NAME}")
+    def newBuildURL = buildURL.replace("job/${env.JOB_NAME}", "blue/organizations/jenkins/${env.JOB_NAME}")
     newBuildURL = newBuildURL.replace("job/${env.BRANCH_NAME}", "detail/${env.BRANCH_NAME}")
     echo newBuildURL
     // Default values
