@@ -39,9 +39,6 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
         newBuildURL = envBuildUrl.replace("job/${repoName}", "blue/organizations/jenkins/${repoName}")
     }
 
-    echo "expected lookup: job/${oldUrlBranchName}"
-    echo "expected replacement: detail/${env.JOB_BASE_NAME}"
-    echo "newBuildURL: ${newBuildURL}"
     // Replace the branch name with the blue detail
     newBuildURL = newBuildURL.replace("job/${oldUrlBranchName}", "detail/${env.JOB_BASE_NAME}")
 
@@ -58,10 +55,3 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
     // Send notifications
     slackSend(color: colour, message: message, baseUrl: baseUrl)
 }
-
-// env.BRANCH_NAME = feature/upgrade-to-grails-4
-// env.JOB_BASE_NAME = feature%2Fupgrade-to-grails-4
-// env.JOB_NAME = mc-core/feature%2Fupgrade-to-grails-4
-// env.BUILD_URL = https://jenkins.cs.ox.ac.uk/job/mc-core/job/feature%252Fupgrade-to-grails-4/127/
-//
-// https://jenkins.cs.ox.ac.uk/blue/organizations/jenkins/mc-core/detail/feature%2Fupgrade-to-grails-4/127/
