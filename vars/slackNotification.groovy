@@ -22,7 +22,7 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
     String envBranchName = env.BRANCH_NAME
 
     String repoName = envJobName.substring(0, envJobName.lastIndexOf('/'))
-    String oldUrlBranchName = envBranchName.replaceAll('%2F','%252F')
+    String oldUrlBranchName = envBranchName.replaceAll('/','%252F')
 
     String newBuildURL
     int lastIndex = repoName.lastIndexOf('/')
@@ -39,6 +39,9 @@ def call(String baseUrl = 'https://oxfordbrcinformatics.slack.com/services/hooks
         newBuildURL = envBuildUrl.replace("job/${repoName}", "blue/organizations/jenkins/${repoName}")
     }
 
+    echo "expected lookup: job/${oldUrlBranchName}"
+    echo "expected replacement: detail/${env.JOB_BASE_NAME}"
+    echo "newBuildURL: ${newBuildURL}"
     // Replace the branch name with the blue detail
     newBuildURL = newBuildURL.replace("job/${oldUrlBranchName}", "detail/${env.JOB_BASE_NAME}")
 
